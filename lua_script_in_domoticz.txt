@@ -1,0 +1,19 @@
+commandArray = {}
+now=os.date("*t")
+
+-- NB : every 5 minutes only, if u prefer every 2 min or even every 1 min
+--      change the 5 below
+--if now.min % 2 == 0 then
+if now.sec % 30 == 0 then
+   local device_idx = 140
+   local f = assert(io.popen("curl -s http://192.168.1.53/distance.data" , 'r'))
+   local s = assert(f:read('*a'))
+   --local status, distance = s:match("|([^|]*)|([^|]*)|")
+   local distance = s:match("([^|]*)")
+   -- convert mm to cm
+   distance = distance / 10
+   -- you can see prints in Setup/Log
+   print("One-Wire : Read and update pelletsmätare: "..s.."=>"..distance)
+   commandArray["UpdateDevice"] = device_idx.."|0|"..distance
+end
+return commandArray
